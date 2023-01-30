@@ -228,8 +228,9 @@ passportTemplate.render(context)
 helpTemplate.render(context)
 
 # Get path
-passportPath = get_path_save_file('new')
-helpPath = get_path_save_file('new_helper')
+fileName = f'passport_{context["name"]}_{context["system_number"]}'
+passportPath = get_path_save_file(fileName)
+helpPath = get_path_save_file(fileName + '_helper')
 
 # Save files
 passportTemplate.save(passportPath)
