@@ -198,6 +198,7 @@ def console_get_mass():
     os.system('cls')
     return mass
 
+
 # The base template for print
 passportTemplate = DocxTemplate('wordDocuments' + sep + 'PassportTemplate.docx')
 # The help template for create sticker in MarkSoft
