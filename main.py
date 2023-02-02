@@ -29,7 +29,7 @@ root.geometry(f'{WEIGHT}x{HEIGHT}')
 purposePanelLable = tkinter.Label(
     root,
     text='ВРУ-[X]-XX-X-X-XX-УХЛ4\nНазначение панели?',
-    font=(BASE_FONT, SIZE_BASE_FONT)
+    font=(BASE_FONT, SIZE_BASE_FONT),
 )
 purposePanelLable.grid(column=1, row=1)
 purposePanelCombo = Combobox(root)
@@ -43,7 +43,7 @@ purposePanelCombo.grid(column=1, row=2)
 purposeIntroductionApparatusLable = tkinter.Label(
     root,
     text='ВРУ-X-[XX]-X-X-XX-УХЛ4\nНазначение вводного аппарата управления?',
-    font=(BASE_FONT, SIZE_BASE_FONT)
+    font=(BASE_FONT, SIZE_BASE_FONT),
 )
 purposeIntroductionApparatusLable.grid(column=1, row=3)
 purposeIntroductionApparatusCombo = Combobox(root)
@@ -77,13 +77,89 @@ purposeIntroductionApparatusCombo['values'] = (
     '26 - Переключатель более 630А',
 )
 purposeIntroductionApparatusCombo.grid(column=1, row=4)  # FIX DESIGN MORE WEIGHT
-
+# existenceExtraDevice
 existenceExtraDeviceLable = tkinter.Label(
     root,
     text='ВРУ-X-XX-[X]-X-XX-УХЛ4\nНаличие дополнительного оборудования',
-    font=(BASE_FONT, SIZE_BASE_FONT)
+    font=(BASE_FONT, SIZE_BASE_FONT),
 )
+existenceExtraDeviceLable.grid(column=1, row=5)
+existenceExtraDeviceCombo = Combobox(root)
+existenceExtraDeviceCombo['values'] = (
+    '0 - Отсутствует',
+    '1 - Блок автоматического управления освещением на 30 групп',
+    '2 - Блок неавтоматического управления освещением на 30 групп',
+    '3 - Блок автоматического управления освещением на 14 групп',
+    '4 - Блок неавтоматического управления освещением на 14 групп',
+    '5 - Блок автоматического управления освещением на 8 групп',
+    '6 - Блок неавтоматического управления освещением на 8 групп',
+)
+existenceExtraDeviceCombo.grid(column=1, row=6)
+# protectionOutgoingLines
+protectionOutgoingLinesLable = tkinter.Label(
+    root,
+    text='ВРУ-X-XX-X-[X]-XX-УХЛ4\nЗащитные аппараты на отходящих линиях',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+)
+protectionOutgoingLinesLable.grid(column=1, row=7)
+protectionOutgoingLinesCombo = Combobox(root)
+protectionOutgoingLinesCombo['values'] = (
+    '1 - Автоматические выключатели',
+    '2 - Предохранители',
+)
+protectionOutgoingLinesCombo.grid(column=1, row=8)
+# internationalProtection
+internationalProtectionLable = tkinter.Label(
+    root,
+    text='ВРУ-X-XX-X-X-[XX]-УХЛ4\nСтепень защиты IP',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+)
+internationalProtectionLable.grid(column=1, row=9)
+internationalProtectionCombo = Combobox(root)
+internationalProtectionCombo['values'] = (
+    '30',
+    '31',
+    '54',
+    '65',
+)
+internationalProtectionCombo.grid(column=1, row=10)
+
+
+def construct_base_name_panel():
+    purposePanel = purposePanelCombo.get()[0]
+    purposeIntroductionApparatus = purposeIntroductionApparatusCombo.get()[:2]
+    purposeIntroductionApparatus = purposeIntroductionApparatus.replace(' ', '')
+    existenceExtraDevice = existenceExtraDeviceCombo.get()[0]
+
+    if protectionOutgoingLinesCombo.get()[0] == '1':
+        protectionOutgoingLines = True
+    else:
+        protectionOutgoingLines = False
+
+    internationalProtection = internationalProtectionCombo.get()[:2]
+
+    if protectionOutgoingLines:
+        base_name = f'ВРУ-{purposePanel}-{purposeIntroductionApparatus}-' \
+                    f'{existenceExtraDevice}-A-{internationalProtection}-УХЛ4'
+    else:
+        base_name = f'ВРУ-{purposePanel}-{purposeIntroductionApparatus}-' \
+                    f'{existenceExtraDevice}-{internationalProtection}-УХЛ4'
+
+    return base_name
 # -----------------------------------------------------------
+
+
+# Choose save path to directory without filename FIX FILENAME
+def get_save_path():
+    save_path = filedialog.askdirectory()
+    return save_path
+
+
+get_save_path_button = tkinter.Button(root, text='Save in', command=get_save_path)
+get_save_path_button.grid(column=1, row=12)
+
+btn = tkinter.Button(root, text='TEST', command=construct_base_name_panel)
+btn.grid(column=1, row=11)
 
 
 root.mainloop()
