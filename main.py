@@ -6,6 +6,7 @@ from tkinter.ttk import Combobox, Checkbutton, Radiobutton, Progressbar
 from tkinter import messagebox, filedialog, Menu
 import datetime
 import winshell
+import re
 
 BASE_FONT = 'Arial Bold'
 SIZE_BASE_FONT = 15
@@ -23,9 +24,8 @@ root.geometry(f'{WEIGHT}x{HEIGHT}')
 # -----------------------------------------------------------
 
 
-# --------------- SET "ВРУ-X-XX-X-X-XX-УХЛ4" ----------------
-# ------------------- LABEL AND COMBOBOX --------------------
-# purposePanel
+# ----------------------- INPUT DATA ------------------------
+# *************** SET "ВРУ-X-XX-X-X-XX-УХЛ4" ****************
 purposePanelLable = tkinter.Label(
     root,
     text='ВРУ-[X]-XX-X-X-XX-УХЛ4\nНазначение панели?',
@@ -123,6 +123,45 @@ internationalProtectionCombo['values'] = (
     '65',
 )
 internationalProtectionCombo.grid(column=1, row=10)
+# **********************************************************
+
+
+# systemNumber
+# ***************** Validate, Lable, Entry *****************
+def is_valid_system_number(s):
+    return re.match("^\d{0,5}$", s) is not None
+
+
+check_system_number = (root.register(is_valid_system_number), "%P")
+
+systemNumberLable = tkinter.Label(
+    root,
+    text='Номер заказа в базе: ',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+)
+systemNumberLable.grid(column=2, row=1)
+systemNumberEntry = tkinter.Entry(validate='key', validatecommand=check_system_number)
+systemNumberEntry.grid(column=3, row=1)
+# **********************************************************
+
+
+# nominalCurrent
+# ***************** Validate, Lable, Entry *****************
+def is_valid_nominal_current(s):
+    return re.match("^\d{0,4}$", s) is not None
+
+
+check_nominal_current = (root.register(is_valid_nominal_current), "%P")
+
+nominalCurrentLable = tkinter.Label(
+    root,
+    text='Номинальный ток устройства: ',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+)
+nominalCurrentLable.grid(column=2, row=2)
+nominalCurrentEntry = tkinter.Entry(validate='key', validatecommand=check_nominal_current)
+nominalCurrentEntry.grid(column=3, row=2)
+# **********************************************************
 
 
 def construct_base_name_panel():
