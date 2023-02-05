@@ -10,18 +10,18 @@ import re
 BASE_FONT = 'Arial Bold'
 SIZE_BASE_FONT = 13
 BACKGROUND_COLOR = '#A0D6FF'
-# Window size
-WEIGHT = 910
-HEIGHT = 700
+WINDOW_WEIGHT = 910
+WINDOW_HEIGHT = 700
 BASE_DIR = os.path.abspath(os.curdir)
+
 # --------------------- WINDOW SETTINGS ---------------------
 root = tkinter.Tk()
 root.title('Auto Passport Constructor')  # title window
 root.iconbitmap(BASE_DIR + sep + 'Pictures' + sep + 'AutoPassportIcon.ico')  # set app icon
 root.configure(bg=BACKGROUND_COLOR)
-root.geometry(f'{WEIGHT}x{HEIGHT}')
-root.maxsize(WEIGHT, HEIGHT)
-root.minsize(WEIGHT, HEIGHT)
+root.geometry(f'{WINDOW_WEIGHT}x{WINDOW_HEIGHT}')
+root.maxsize(WINDOW_WEIGHT, WINDOW_HEIGHT)
+root.minsize(WINDOW_WEIGHT, WINDOW_HEIGHT)
 # -----------------------------------------------------------
 
 
