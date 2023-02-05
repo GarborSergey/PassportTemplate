@@ -11,7 +11,7 @@ import re
 BASE_FONT = 'Arial Bold'
 SIZE_BASE_FONT = 15
 # Window size
-WEIGHT = 800
+WEIGHT = 1000
 HEIGHT = 500
 
 # --------------------- WINDOW SETTINGS ---------------------
@@ -155,7 +155,7 @@ check_nominal_current = (root.register(is_valid_nominal_current), "%P")
 
 nominalCurrentLable = tkinter.Label(
     root,
-    text='Номинальный ток устройства: ',
+    text='Номинальный ток устройства [A]: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
 )
 nominalCurrentLable.grid(column=2, row=2)
@@ -164,6 +164,145 @@ nominalCurrentEntry.grid(column=3, row=2)
 # **********************************************************
 
 
+#shortCircuitCurrent
+# ********************** Lable, Entry **********************
+shortCircuitCurrentLable = tkinter.Label(
+    root,
+    text='Минимальный ток КЗ [кА]:',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+)
+shortCircuitCurrentLable.grid(column=2, row=3)
+shortCircuitCurrentEntry = tkinter.Entry()
+shortCircuitCurrentEntry.grid(column=3, row=3)
+# **********************************************************
+
+
+#grounding
+# ******************** Lable, Combobox *********************
+groundingLable = tkinter.Label(
+    root,
+    text='Система заземления: ',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+)
+groundingLable.grid(column=2, row=4)
+groundingCombo = Combobox(root)
+groundingCombo['values'] = (
+    'TN-S',
+    'TN-C',
+    'TN-C-S',
+    'TT',
+    'IT',
+)
+groundingCombo.grid(column=3, row=4)
+# **********************************************************
+
+
+#crossSection
+# ********************** Lable, Entry **********************
+crossSectionLable = tkinter.Label(
+    root,
+    text='Максимальное сечение жил [Nxmm^2]: ',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+)
+crossSectionLable.grid(column=2, row=5)
+crossSectionEntry = tkinter.Entry()
+crossSectionEntry.grid(column=3, row=5)
+# **********************************************************
+
+
+#installation
+# ******************** Lable, Combobox *********************
+installationLable = tkinter.Label(
+    root,
+    text='Способ установки: ',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+)
+installationLable.grid(column=2, row=6)
+installationCombo = Combobox(root)
+installationCombo['values'] = (
+    'Навесной',
+    'Напольный',
+    'Встраиваемый',
+)
+installationCombo.grid(column=3, row=6)
+# **********************************************************
+
+
+# height, length, depth, mass
+# ***************** Validate, Lable, Entry *****************
+def is_valid_HLDM(s):
+    return re.match("^\d{0,5}$", s) is not None
+
+
+check_HLDM = (root.register(is_valid_HLDM), "%P")
+
+heightLable = tkinter.Label(
+    root,
+    text='Высота [мм]: ',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+)
+lengthLable = tkinter.Label(
+    root,
+    text='Ширина [мм]: ',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+)
+depthLable = tkinter.Label(
+    root,
+    text='Глубина [мм]: ',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+)
+massLable = tkinter.Label(
+    root,
+    text='Вес [кг]: ',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+)
+heightLable.grid(column=2, row=7)
+lengthLable.grid(column=2, row=8)
+depthLable.grid(column=2, row=9)
+massLable.grid(column=2, row=10)
+
+heightEntry = tkinter.Entry(validate='key', validatecommand=check_HLDM)
+lengthEntry = tkinter.Entry(validate='key', validatecommand=check_HLDM)
+depthEntry = tkinter.Entry(validate='key', validatecommand=check_HLDM)
+massEntry = tkinter.Entry(validate='key', validatecommand=check_HLDM)
+
+heightEntry.grid(column=3, row=7)
+lengthEntry.grid(column=3, row=8)
+depthEntry.grid(column=3, row=9)
+massEntry.grid(column=3, row=10)
+# **********************************************************
+
+
+# name
+# ********************** Lable, Entry **********************
+nameLable = tkinter.Label(
+    root,
+    text='Название щита: ',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+)
+nameLable.grid(column=2, row=11)
+nameEntry = tkinter.Entry()
+nameEntry.grid(column=3, row=11)
+# **********************************************************
+
+
+# createHelper
+# **************** BooleanVar, Checkbutton *****************
+createHelper = tkinter.BooleanVar()
+createHelper.set(False)
+createHelperCheckbutton = Checkbutton(
+    root,
+    text='Создать подсказку для шильдика',
+    variable=createHelper,
+    state='DISABLE',
+)
+createHelperCheckbutton.grid(column=3, row=12)
+# **********************************************************
+# -----------------------------------------------------------
+
+
+# --------------- TRANSFORMATION INPUT DATA -----------------
+# baseName
 def construct_base_name_panel():
     purposePanel = purposePanelCombo.get()[0]
     purposeIntroductionApparatus = purposeIntroductionApparatusCombo.get()[:2]
@@ -185,59 +324,95 @@ def construct_base_name_panel():
                     f'{existenceExtraDevice}-{internationalProtection}-УХЛ4'
 
     return base_name
+
+
+# fileName
+def construct_file_name():
+    name = nameEntry.get()
+    systemNumber = systemNumberEntry.get()
+    return f'{name}_{systemNumber}_passport'
+
+
+# fileNameHelper
+def construct_file_name_helper():
+    name = nameEntry.get()
+    systemNumber = systemNumberEntry.get()
+    return f'{name}_{systemNumber}_helper'
 # -----------------------------------------------------------
 
 
-# Choose save path to directory without filename FIX FILENAME
-def get_save_path():
-    save_path = filedialog.askdirectory()
-    return save_path
+# ------------------- CONSTRUCT CONTEXT ---------------------
+def construct_context():
+    year = datetime.datetime.now().year
+    basicName = construct_base_name_panel()
+    systemNumber = systemNumberEntry.get()
+    name = nameEntry.get()
+    nominalCurrent = nominalCurrentEntry.get()
+    shortCircuitCurrent = shortCircuitCurrentEntry.get()
+    internationalProtection = internationalProtectionCombo.get()
+    grounding = groundingCombo.get()
+    installation = installationCombo.get()
+    crossSection = crossSectionEntry.get()
+    height = heightEntry.get()
+    length = lengthEntry.get()
+    depth = depthEntry.get()
+    mass = massEntry.get()
+
+    context = {
+        'basic_name': basicName,
+        'system_number': systemNumber,
+        'name': name,
+        'year': year,
+        'nominal_current': nominalCurrent,
+        'nominal_Icu': shortCircuitCurrent,
+        'IP': internationalProtection,
+        'grounding': grounding,
+        'installation': installation,
+        'cross_section': crossSection,
+        'height': height,
+        'length': length,
+        'depth': depth,
+        'mass': mass,
+    }
+
+    return context
+# -----------------------------------------------------------
 
 
-get_save_path_button = tkinter.Button(root, text='Save in', command=get_save_path)
-get_save_path_button.grid(column=1, row=12)
+# ------------- MAIN FUNCTION CREATE FILE(S) ----------------
+def create_file():
+    savePath = filedialog.askdirectory()
 
-btn = tkinter.Button(root, text='TEST', command=construct_base_name_panel)
-btn.grid(column=1, row=11)
+    fileName = construct_file_name()
+    fileNameHelper = construct_file_name_helper()
+
+    savePathFile = savePath + sep + fileName + '.docx'  # MB EXCEPTION
+    savePathFileHelper = savePath + sep + fileNameHelper + '.docx'
+
+    context = construct_context()
+
+    passportTemplate = DocxTemplate('wordDocuments' + sep + 'PassportTemplate.docx')
+    helpTemplate = DocxTemplate('wordDocuments' + sep + 'HelpTemplate.docx')
+
+    passportTemplate.render(context)
+    helpTemplate.render(context)
+
+    passportTemplate.save(savePathFile)
+    if createHelper:
+        helpTemplate.save(savePathFileHelper)
+
+# -----------------------------------------------------------
 
 
-root.mainloop()
+# -------------- MAIN BUTTON CREATE FILE(S) -----------------
+btn = tkinter.Button(
+    root,
+    text='Сохранить',
+    command=create_file,
+)
+btn.grid(column=3, row=13)
+# -----------------------------------------------------------
 
-'''
-# The base template for print
-passportTemplate = DocxTemplate('wordDocuments' + sep + 'PassportTemplate.docx')
-# The help template for create sticker in MarkSoft
-helpTemplate = DocxTemplate('wordDocuments' + sep + 'HelpTemplate.docx')
+if __name__ == '__main__':
+    root.mainloop()
 
-ip = console_get_IP()
-
-context = {
-    'basic_name': console_get_basic_name(ip),
-    'system_number': console_get_system_number(),
-    'name': console_get_name(),
-    'year': datetime.datetime.now().year,
-    'nominal_current': console_get_nominal_current(),
-    'nominal_Icu': console_get_nominal_Icu(),
-    'IP': ip,
-    'grounding': console_get_grounding(),
-    'installation': console_get_installation(),
-    'cross_section': console_get_cross_section(),
-    'height': console_get_height(),
-    'length': console_get_length(),
-    'depth': console_get_depth(),
-    'mass': console_get_mass(),
-}
-
-# Render templates
-passportTemplate.render(context)
-helpTemplate.render(context)
-
-# Get path
-fileName = f'passport_{context["name"]}_{context["system_number"]}'
-passportPath = get_path_save_file(fileName)
-helpPath = get_path_save_file(fileName + '_helper')
-
-# Save files
-passportTemplate.save(passportPath)
-helpTemplate.save(helpPath)
-'''
