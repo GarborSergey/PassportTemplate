@@ -1,50 +1,102 @@
+import os
 from os import sep
 from docxtpl import DocxTemplate
 import tkinter
-from tkinter.ttk import Combobox, Checkbutton, Radiobutton, Progressbar
-from tkinter import messagebox, filedialog, Menu
+from tkinter.ttk import Combobox
+from tkinter import messagebox, filedialog, Menu, Checkbutton
 import datetime
 import re
 
 BASE_FONT = 'Arial Bold'
-SIZE_BASE_FONT = 15
+SIZE_BASE_FONT = 13
+BACKGROUND_COLOR = '#A0D6FF'
 # Window size
-WEIGHT = 1000
-HEIGHT = 500
-
+WEIGHT = 910
+HEIGHT = 700
+BASE_DIR = os.path.abspath(os.curdir)
 # --------------------- WINDOW SETTINGS ---------------------
 root = tkinter.Tk()
-root.title('Auto Passport constructor')  # title window
-root.iconbitmap(default='Pictures' + sep + 'AutoPassportIcon.ico')  # set app icon
-root.attributes("-toolwindow", True)  # disable toolbar in window
-
+root.title('Auto Passport Constructor')  # title window
+root.iconbitmap(BASE_DIR + sep + 'Pictures' + sep + 'AutoPassportIcon.ico')  # set app icon
+root.configure(bg=BACKGROUND_COLOR)
 root.geometry(f'{WEIGHT}x{HEIGHT}')
+root.maxsize(WEIGHT, HEIGHT)
+root.minsize(WEIGHT, HEIGHT)
+# -----------------------------------------------------------
+
+
+# ------------------------- FRAMES --------------------------
+inputDataFrame = tkinter.LabelFrame(
+    root,
+    bd=0,
+    bg=BACKGROUND_COLOR,
+)
+
+baseNameFrame = tkinter.LabelFrame(
+    inputDataFrame,
+    text='Условное обозначение',
+    width=600,
+    height=300,
+    font=(BASE_FONT, SIZE_BASE_FONT+2),
+    bg=BACKGROUND_COLOR,
+)
+
+generalDataFrame = tkinter.LabelFrame(
+    inputDataFrame,
+    text='Общие данные',
+    font=(BASE_FONT, SIZE_BASE_FONT+2),
+    width=600,
+    height=300,
+    bg=BACKGROUND_COLOR,
+)
+
+overallDimensionsWeightFrame = tkinter.LabelFrame(
+    inputDataFrame,
+    text='Габаритные размеры, вес',
+    font=(BASE_FONT, SIZE_BASE_FONT+2),
+    width=600,
+    height=300,
+    bg=BACKGROUND_COLOR,
+)
+
+mainFrame = tkinter.LabelFrame(
+    root,
+    bd=0,
+    bg=BACKGROUND_COLOR,
+)
+
+logoFrame = tkinter.LabelFrame(
+    root,
+    bd=0,
+    width=600,
+    height=300,
+    bg=BACKGROUND_COLOR,
+)
 # -----------------------------------------------------------
 
 
 # ----------------------- INPUT DATA ------------------------
 # *************** SET "ВРУ-X-XX-X-X-XX-УХЛ4" ****************
 purposePanelLable = tkinter.Label(
-    root,
-    text='ВРУ-[X]-XX-X-X-XX-УХЛ4\nНазначение панели?',
+    baseNameFrame,
+    text='Назначение панели: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
-purposePanelLable.grid(column=1, row=1)
-purposePanelCombo = Combobox(root)
+purposePanelCombo = Combobox(baseNameFrame, width=60, state="readonly")
 purposePanelCombo['values'] = (
     '1 - Вводное',
     '2 - Вводно-распределительное',
     '3 - Распределительное',
 )
-purposePanelCombo.grid(column=1, row=2)
 # purposeIntroductionApparatus
 purposeIntroductionApparatusLable = tkinter.Label(
-    root,
-    text='ВРУ-X-[XX]-X-X-XX-УХЛ4\nНазначение вводного аппарата управления?',
+    baseNameFrame,
+    text='Назначение вводного аппарата управления: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
-purposeIntroductionApparatusLable.grid(column=1, row=3)
-purposeIntroductionApparatusCombo = Combobox(root)
+purposeIntroductionApparatusCombo = Combobox(baseNameFrame, width=60, state="readonly")
 purposeIntroductionApparatusCombo['values'] = (
     '0 - Отсутствует',
     '1 - Переключатель на 100А',
@@ -74,15 +126,14 @@ purposeIntroductionApparatusCombo['values'] = (
     '25 - Два выключателя боее 630А',
     '26 - Переключатель более 630А',
 )
-purposeIntroductionApparatusCombo.grid(column=1, row=4)  # FIX DESIGN MORE WEIGHT
 # existenceExtraDevice
 existenceExtraDeviceLable = tkinter.Label(
-    root,
-    text='ВРУ-X-XX-[X]-X-XX-УХЛ4\nНаличие дополнительного оборудования',
+    baseNameFrame,
+    text='Наличие дополнительного оборудования: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
-existenceExtraDeviceLable.grid(column=1, row=5)
-existenceExtraDeviceCombo = Combobox(root)
+existenceExtraDeviceCombo = Combobox(baseNameFrame, width=60, state="readonly")
 existenceExtraDeviceCombo['values'] = (
     '0 - Отсутствует',
     '1 - Блок автоматического управления освещением на 30 групп',
@@ -92,35 +143,32 @@ existenceExtraDeviceCombo['values'] = (
     '5 - Блок автоматического управления освещением на 8 групп',
     '6 - Блок неавтоматического управления освещением на 8 групп',
 )
-existenceExtraDeviceCombo.grid(column=1, row=6)
 # protectionOutgoingLines
 protectionOutgoingLinesLable = tkinter.Label(
-    root,
-    text='ВРУ-X-XX-X-[X]-XX-УХЛ4\nЗащитные аппараты на отходящих линиях',
+    baseNameFrame,
+    text='Защитные аппараты на отходящих линиях: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
-protectionOutgoingLinesLable.grid(column=1, row=7)
-protectionOutgoingLinesCombo = Combobox(root)
+protectionOutgoingLinesCombo = Combobox(baseNameFrame, width=60, state="readonly")
 protectionOutgoingLinesCombo['values'] = (
     '1 - Автоматические выключатели',
     '2 - Предохранители',
 )
-protectionOutgoingLinesCombo.grid(column=1, row=8)
 # internationalProtection
 internationalProtectionLable = tkinter.Label(
-    root,
-    text='ВРУ-X-XX-X-X-[XX]-УХЛ4\nСтепень защиты IP',
+    baseNameFrame,
+    text='Степень защиты IP: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
-internationalProtectionLable.grid(column=1, row=9)
-internationalProtectionCombo = Combobox(root)
+internationalProtectionCombo = Combobox(baseNameFrame, width=60, state="readonly")
 internationalProtectionCombo['values'] = (
     '30',
     '31',
     '54',
     '65',
 )
-internationalProtectionCombo.grid(column=1, row=10)
 # **********************************************************
 
 
@@ -133,13 +181,12 @@ def is_valid_system_number(s):
 check_system_number = (root.register(is_valid_system_number), "%P")
 
 systemNumberLable = tkinter.Label(
-    root,
+    generalDataFrame,
     text='Номер заказа в базе: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
-systemNumberLable.grid(column=2, row=1)
-systemNumberEntry = tkinter.Entry(validate='key', validatecommand=check_system_number)
-systemNumberEntry.grid(column=3, row=1)
+systemNumberEntry = tkinter.Entry(generalDataFrame, validate='key', validatecommand=check_system_number, width=15)
 # **********************************************************
 
 
@@ -152,38 +199,36 @@ def is_valid_nominal_current(s):
 check_nominal_current = (root.register(is_valid_nominal_current), "%P")
 
 nominalCurrentLable = tkinter.Label(
-    root,
+    generalDataFrame,
     text='Номинальный ток устройства [A]: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
-nominalCurrentLable.grid(column=2, row=2)
-nominalCurrentEntry = tkinter.Entry(validate='key', validatecommand=check_nominal_current)
-nominalCurrentEntry.grid(column=3, row=2)
+nominalCurrentEntry = tkinter.Entry(generalDataFrame, validate='key', validatecommand=check_nominal_current, width=15)
 # **********************************************************
 
 
 #shortCircuitCurrent
 # ********************** Lable, Entry **********************
 shortCircuitCurrentLable = tkinter.Label(
-    root,
+    generalDataFrame,
     text='Минимальный ток КЗ [кА]:',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
-shortCircuitCurrentLable.grid(column=2, row=3)
-shortCircuitCurrentEntry = tkinter.Entry()
-shortCircuitCurrentEntry.grid(column=3, row=3)
+shortCircuitCurrentEntry = tkinter.Entry(generalDataFrame, width=15)
 # **********************************************************
 
 
 #grounding
 # ******************** Lable, Combobox *********************
 groundingLable = tkinter.Label(
-    root,
+    generalDataFrame,
     text='Система заземления: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
-groundingLable.grid(column=2, row=4)
-groundingCombo = Combobox(root)
+groundingCombo = Combobox(generalDataFrame, width=12, state="readonly")
 groundingCombo['values'] = (
     'TN-S',
     'TN-C',
@@ -191,38 +236,35 @@ groundingCombo['values'] = (
     'TT',
     'IT',
 )
-groundingCombo.grid(column=3, row=4)
 # **********************************************************
 
 
 #crossSection
 # ********************** Lable, Entry **********************
 crossSectionLable = tkinter.Label(
-    root,
+    generalDataFrame,
     text='Максимальное сечение жил [Nxmm^2]: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
-crossSectionLable.grid(column=2, row=5)
-crossSectionEntry = tkinter.Entry()
-crossSectionEntry.grid(column=3, row=5)
+crossSectionEntry = tkinter.Entry(generalDataFrame, width=15)
 # **********************************************************
 
 
 #installation
 # ******************** Lable, Combobox *********************
 installationLable = tkinter.Label(
-    root,
+    generalDataFrame,
     text='Способ установки: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
-installationLable.grid(column=2, row=6)
-installationCombo = Combobox(root)
+installationCombo = Combobox(generalDataFrame, width=12, state="readonly")
 installationCombo['values'] = (
     'Навесной',
     'Напольный',
     'Встраиваемый',
 )
-installationCombo.grid(column=3, row=6)
 # **********************************************************
 
 
@@ -235,52 +277,46 @@ def is_valid_HLDM(s):
 check_HLDM = (root.register(is_valid_HLDM), "%P")
 
 heightLable = tkinter.Label(
-    root,
+    overallDimensionsWeightFrame,
     text='Высота [мм]: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
 lengthLable = tkinter.Label(
-    root,
+    overallDimensionsWeightFrame,
     text='Ширина [мм]: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
 depthLable = tkinter.Label(
-    root,
+    overallDimensionsWeightFrame,
     text='Глубина [мм]: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
 massLable = tkinter.Label(
-    root,
+    overallDimensionsWeightFrame,
     text='Вес [кг]: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
-heightLable.grid(column=2, row=7)
-lengthLable.grid(column=2, row=8)
-depthLable.grid(column=2, row=9)
-massLable.grid(column=2, row=10)
 
-heightEntry = tkinter.Entry(validate='key', validatecommand=check_HLDM)
-lengthEntry = tkinter.Entry(validate='key', validatecommand=check_HLDM)
-depthEntry = tkinter.Entry(validate='key', validatecommand=check_HLDM)
-massEntry = tkinter.Entry(validate='key', validatecommand=check_HLDM)
-
-heightEntry.grid(column=3, row=7)
-lengthEntry.grid(column=3, row=8)
-depthEntry.grid(column=3, row=9)
-massEntry.grid(column=3, row=10)
+heightEntry = tkinter.Entry(overallDimensionsWeightFrame, validate='key', validatecommand=check_HLDM)
+lengthEntry = tkinter.Entry(overallDimensionsWeightFrame, validate='key', validatecommand=check_HLDM)
+depthEntry = tkinter.Entry(overallDimensionsWeightFrame, validate='key', validatecommand=check_HLDM)
+massEntry = tkinter.Entry(overallDimensionsWeightFrame, validate='key', validatecommand=check_HLDM)
 # **********************************************************
 
 
 # name
 # ********************** Lable, Entry **********************
 nameLable = tkinter.Label(
-    root,
+    generalDataFrame,
     text='Название щита: ',
     font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
 )
-nameLable.grid(column=2, row=11)
-nameEntry = tkinter.Entry()
-nameEntry.grid(column=3, row=11)
+nameEntry = tkinter.Entry(generalDataFrame, width=15)
 # **********************************************************
 
 
@@ -289,12 +325,15 @@ nameEntry.grid(column=3, row=11)
 createHelper = tkinter.BooleanVar()
 createHelper.set(False)
 createHelperCheckbutton = Checkbutton(
-    root,
+    mainFrame,
     text='Создать подсказку для шильдика',
     variable=createHelper,
-    state='DISABLE',
+    width=100,
+    bg=BACKGROUND_COLOR,
+    font=(BASE_FONT, SIZE_BASE_FONT),
+    activebackground=BACKGROUND_COLOR,
+    height=2
 )
-createHelperCheckbutton.grid(column=3, row=12)
 # **********************************************************
 # -----------------------------------------------------------
 
@@ -404,11 +443,135 @@ def create_file():
 
 # -------------- MAIN BUTTON CREATE FILE(S) -----------------
 btn = tkinter.Button(
-    root,
-    text='Сохранить',
+    mainFrame,
+    text='СОЗДАТЬ ПАСПОРТ',
     command=create_file,
+    font=(BASE_FONT, SIZE_BASE_FONT+3)
 )
-btn.grid(column=3, row=13)
+# -----------------------------------------------------------
+
+
+# ----------------------- POSITION --------------------------
+logoFrame.grid(
+    column=0,
+    row=0,
+
+    ipadx=10,
+    ipady=10,
+)
+
+inputDataFrame.grid(
+    column=0,
+    row=1,
+
+    ipadx=10,
+    ipady=10,
+
+    padx=10,
+)
+baseNameFrame.grid(
+    column=0,
+    row=1,
+
+    columnspan=2,
+
+    ipadx=10,
+    ipady=10,
+
+    padx=10,
+)
+generalDataFrame.grid(
+    column=0,
+    row=2,
+
+    columnspan=1,
+
+    ipadx=10,
+    ipady=10,
+
+    padx=10,
+
+    sticky='w',
+)
+overallDimensionsWeightFrame.grid(
+    column=1,
+    row=2,
+
+    columnspan=1,
+
+    ipadx=10,
+    ipady=10,
+
+    padx=0,
+
+    sticky='w',
+)
+
+mainFrame.grid(
+    column=0,
+    row=2,
+)
+
+logoCanvas = tkinter.Canvas(logoFrame, height=120, width=700, bg=BACKGROUND_COLOR, bd=0, highlightthickness=0)
+logoImage = tkinter.PhotoImage(file=BASE_DIR + sep + 'Pictures' + sep + 'logo.png',)
+logo = logoCanvas.create_image(0, 0, anchor='nw', image=logoImage)
+logoCanvas.grid(column=0, row=0)
+
+purposePanelLable.grid(column=0, row=1, sticky='e')
+purposePanelCombo.grid(column=1, row=1)
+
+purposeIntroductionApparatusLable.grid(column=0, row=2, sticky='e')
+purposeIntroductionApparatusCombo.grid(column=1, row=2)
+
+existenceExtraDeviceLable.grid(column=0, row=3, sticky='e')
+existenceExtraDeviceCombo.grid(column=1, row=3)
+
+protectionOutgoingLinesLable.grid(column=0, row=4, sticky='e')
+protectionOutgoingLinesCombo.grid(column=1, row=4)
+
+internationalProtectionLable.grid(column=0, row=5, sticky='e')
+internationalProtectionCombo.grid(column=1, row=5)
+
+nameLable.grid(column=0, row=0, sticky='e')
+nameEntry.grid(column=1, row=0)
+
+systemNumberLable.grid(column=0, row=1, sticky='e')
+systemNumberEntry.grid(column=1, row=1)
+
+nominalCurrentLable.grid(column=0, row=2, sticky='e')
+nominalCurrentEntry.grid(column=1, row=2)
+
+shortCircuitCurrentLable.grid(column=0, row=3, sticky='e')
+shortCircuitCurrentEntry.grid(column=1, row=3)
+
+groundingLable.grid(column=0, row=4, sticky='e')
+groundingCombo.grid(column=1, row=4)
+
+crossSectionLable.grid(column=0, row=5, sticky='e')
+crossSectionEntry.grid(column=1, row=5)
+
+installationLable.grid(column=0, row=6, sticky='e')
+installationCombo.grid(column=1, row=6)
+
+heightLable.grid(column=0, row=0, sticky='e')
+heightEntry.grid(column=1, row=0)
+
+lengthLable.grid(column=0, row=2, sticky='e')
+lengthEntry.grid(column=1, row=2)
+
+depthLable.grid(column=0, row=3, sticky='e')
+depthEntry.grid(column=1, row=3)
+
+massLable.grid(column=0, row=4, sticky='e')
+massEntry.grid(column=1, row=4)
+
+createHelperCheckbutton.configure()
+createHelperCheckbutton.grid(column=0, row=0)
+
+btn.configure(height=1, width=50, bg='#034569', fg='white')
+btn.grid(column=0, row=1, pady=10,)
+
+
 # -----------------------------------------------------------
 
 if __name__ == '__main__':
