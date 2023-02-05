@@ -1,11 +1,9 @@
-import os
 from os import sep
 from docxtpl import DocxTemplate
 import tkinter
 from tkinter.ttk import Combobox, Checkbutton, Radiobutton, Progressbar
 from tkinter import messagebox, filedialog, Menu
 import datetime
-import winshell
 import re
 
 BASE_FONT = 'Arial Bold'
@@ -386,7 +384,7 @@ def create_file():
     fileName = construct_file_name()
     fileNameHelper = construct_file_name_helper()
 
-    savePathFile = savePath + sep + fileName + '.docx'  # MB EXCEPTION
+    savePathFile = savePath + sep + fileName + '.docx'
     savePathFileHelper = savePath + sep + fileNameHelper + '.docx'
 
     context = construct_context()
