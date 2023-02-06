@@ -7,6 +7,7 @@ from tkinter import messagebox, filedialog, Menu, Checkbutton
 import datetime
 import re
 
+VERSION = '2.5'  # 06/02/2023 13:19
 BASE_FONT = 'Arial Bold'
 SIZE_BASE_FONT = 13
 BACKGROUND_COLOR = '#A0D6FF'
@@ -37,14 +38,14 @@ baseNameFrame = tkinter.LabelFrame(
     text='Условное обозначение',
     width=600,
     height=300,
-    font=(BASE_FONT, SIZE_BASE_FONT+2),
+    font=(BASE_FONT, SIZE_BASE_FONT + 2),
     bg=BACKGROUND_COLOR,
 )
 
 generalDataFrame = tkinter.LabelFrame(
     inputDataFrame,
     text='Общие данные',
-    font=(BASE_FONT, SIZE_BASE_FONT+2),
+    font=(BASE_FONT, SIZE_BASE_FONT + 2),
     width=600,
     height=300,
     bg=BACKGROUND_COLOR,
@@ -53,7 +54,7 @@ generalDataFrame = tkinter.LabelFrame(
 overallDimensionsWeightFrame = tkinter.LabelFrame(
     inputDataFrame,
     text='Габаритные размеры, вес',
-    font=(BASE_FONT, SIZE_BASE_FONT+2),
+    font=(BASE_FONT, SIZE_BASE_FONT + 2),
     width=600,
     height=300,
     bg=BACKGROUND_COLOR,
@@ -169,6 +170,8 @@ internationalProtectionCombo['values'] = (
     '54',
     '65',
 )
+
+
 # **********************************************************
 
 
@@ -187,6 +190,8 @@ systemNumberLable = tkinter.Label(
     bg=BACKGROUND_COLOR,
 )
 systemNumberEntry = tkinter.Entry(generalDataFrame, validate='key', validatecommand=check_system_number, width=15)
+
+
 # **********************************************************
 
 
@@ -208,7 +213,7 @@ nominalCurrentEntry = tkinter.Entry(generalDataFrame, validate='key', validateco
 # **********************************************************
 
 
-#shortCircuitCurrent
+# shortCircuitCurrent
 # ********************** Lable, Entry **********************
 shortCircuitCurrentLable = tkinter.Label(
     generalDataFrame,
@@ -220,7 +225,7 @@ shortCircuitCurrentEntry = tkinter.Entry(generalDataFrame, width=15)
 # **********************************************************
 
 
-#grounding
+# grounding
 # ******************** Lable, Combobox *********************
 groundingLable = tkinter.Label(
     generalDataFrame,
@@ -239,7 +244,7 @@ groundingCombo['values'] = (
 # **********************************************************
 
 
-#crossSection
+# crossSection
 # ********************** Lable, Entry **********************
 crossSectionLable = tkinter.Label(
     generalDataFrame,
@@ -251,7 +256,7 @@ crossSectionEntry = tkinter.Entry(generalDataFrame, width=15)
 # **********************************************************
 
 
-#installation
+# installation
 # ******************** Lable, Combobox *********************
 installationLable = tkinter.Label(
     generalDataFrame,
@@ -265,6 +270,8 @@ installationCombo['values'] = (
     'Напольный',
     'Встраиваемый',
 )
+
+
 # **********************************************************
 
 
@@ -334,6 +341,8 @@ createHelperCheckbutton = Checkbutton(
     activebackground=BACKGROUND_COLOR,
     height=2
 )
+
+
 # **********************************************************
 # -----------------------------------------------------------
 
@@ -341,17 +350,20 @@ createHelperCheckbutton = Checkbutton(
 # --------------- TRANSFORMATION INPUT DATA -----------------
 # baseName
 def construct_base_name_panel():
-    purposePanel = purposePanelCombo.get()[0]
-    purposeIntroductionApparatus = purposeIntroductionApparatusCombo.get()[:2]
+    try:
+        purposePanel = purposePanelCombo.get()[0]
+        purposeIntroductionApparatus = purposeIntroductionApparatusCombo.get()[:2]
+        existenceExtraDevice = existenceExtraDeviceCombo.get()[0]
+        internationalProtection = internationalProtectionCombo.get()[:2]
+
+        if protectionOutgoingLinesCombo.get()[0] == '1':
+            protectionOutgoingLines = True
+        else:
+            protectionOutgoingLines = False
+    except IndexError:
+        return None
+
     purposeIntroductionApparatus = purposeIntroductionApparatus.replace(' ', '')
-    existenceExtraDevice = existenceExtraDeviceCombo.get()[0]
-
-    if protectionOutgoingLinesCombo.get()[0] == '1':
-        protectionOutgoingLines = True
-    else:
-        protectionOutgoingLines = False
-
-    internationalProtection = internationalProtectionCombo.get()[:2]
 
     if protectionOutgoingLines:
         base_name = f'ВРУ-{purposePanel}-{purposeIntroductionApparatus}-' \
@@ -375,6 +387,14 @@ def construct_file_name_helper():
     name = nameEntry.get()
     systemNumber = systemNumberEntry.get()
     return f'{name}_{systemNumber}_helper'
+
+# info function
+def info():
+    message = f'Auto Passport Constructor - version: {VERSION}\n' \
+              f'creator: GarborSergey\n' \
+              f'source: https://github.com/GarborSergey/PassportTemplate\n' \
+              f'report bugs: garborfersru@gmail.com'
+    messagebox.showinfo('Info', message)
 # -----------------------------------------------------------
 
 
@@ -395,6 +415,10 @@ def construct_context():
     depth = depthEntry.get()
     mass = massEntry.get()
 
+    if not all([year, basicName, systemNumber, name, nominalCurrent, shortCircuitCurrent, internationalProtection,
+                grounding, installation, crossSection, height, length, depth, mass]):
+        return
+
     context = {
         'basic_name': basicName,
         'system_number': systemNumber,
@@ -413,11 +437,19 @@ def construct_context():
     }
 
     return context
+
+
 # -----------------------------------------------------------
 
 
 # ------------- MAIN FUNCTION CREATE FILE(S) ----------------
 def create_file():
+    context = construct_context()
+
+    if not context:
+        messagebox.showerror('Error', 'Заполните все ячейки')
+        return
+
     savePath = filedialog.askdirectory()
 
     fileName = construct_file_name()
@@ -426,8 +458,6 @@ def create_file():
     savePathFile = savePath + sep + fileName + '.docx'
     savePathFileHelper = savePath + sep + fileNameHelper + '.docx'
 
-    context = construct_context()
-
     passportTemplate = DocxTemplate('wordDocuments' + sep + 'PassportTemplate.docx')
     helpTemplate = DocxTemplate('wordDocuments' + sep + 'HelpTemplate.docx')
 
@@ -435,9 +465,10 @@ def create_file():
     helpTemplate.render(context)
 
     passportTemplate.save(savePathFile)
-    if createHelper:
+    if createHelper.get():
         helpTemplate.save(savePathFileHelper)
 
+    messagebox.showinfo('Success', f'"{fileName}" успешно создан по пути - [{savePath}]')
 # -----------------------------------------------------------
 
 
@@ -446,7 +477,7 @@ btn = tkinter.Button(
     mainFrame,
     text='СОЗДАТЬ ПАСПОРТ',
     command=create_file,
-    font=(BASE_FONT, SIZE_BASE_FONT+3)
+    font=(BASE_FONT, SIZE_BASE_FONT + 3)
 )
 # -----------------------------------------------------------
 
@@ -512,10 +543,27 @@ mainFrame.grid(
     row=2,
 )
 
+# ********************** COMPANY LOGO **********************
 logoCanvas = tkinter.Canvas(logoFrame, height=120, width=700, bg=BACKGROUND_COLOR, bd=0, highlightthickness=0)
-logoImage = tkinter.PhotoImage(file=BASE_DIR + sep + 'Pictures' + sep + 'logo.png',)
+logoImage = tkinter.PhotoImage(file=BASE_DIR + sep + 'Pictures' + sep + 'logo.png', )
 logo = logoCanvas.create_image(0, 0, anchor='nw', image=logoImage)
-logoCanvas.grid(column=0, row=0)
+logoCanvas.grid(column=0, row=0, columnspan=2)
+# **********************************************************
+
+
+# ********************** INFO BUTTON ***********************
+infoImage = tkinter.PhotoImage(file=BASE_DIR + sep + 'Pictures' + sep + 'info.png')
+smallInfoImage = infoImage.subsample(10, 10)
+buttonInfo = tkinter.Button(
+    logoFrame,
+    image=smallInfoImage,
+    bg=BACKGROUND_COLOR,
+    borderwidth=0,
+    activebackground=BACKGROUND_COLOR,
+    command=info
+)
+buttonInfo.grid(column=3, row=0)
+# **********************************************************
 
 purposePanelLable.grid(column=0, row=1, sticky='e')
 purposePanelCombo.grid(column=1, row=1)
@@ -569,11 +617,30 @@ createHelperCheckbutton.configure()
 createHelperCheckbutton.grid(column=0, row=0)
 
 btn.configure(height=1, width=50, bg='#034569', fg='white')
-btn.grid(column=0, row=1, pady=10,)
-
+btn.grid(column=0, row=1, pady=10, )
 
 # -----------------------------------------------------------
 
+
+# ---------------------CASE FOR TEST ------------------------
+# purposePanelCombo.set('1')
+# purposeIntroductionApparatusCombo.set('1')
+# existenceExtraDeviceCombo.set('0')
+# protectionOutgoingLinesCombo.set('1')
+# internationalProtectionCombo.set('31')
+# nameEntry.insert(0, 'TEST_ЩМП-1')
+# systemNumberEntry.insert(0, '8888')
+# nominalCurrentEntry.insert(0, '250')
+# shortCircuitCurrentEntry.insert(0, '4.5')
+# groundingCombo.set('TN-S')
+# crossSectionEntry.insert(0, '1x25')
+# installationCombo.set('Навесной')
+# heightEntry.insert(0, '2000')
+# lengthEntry.insert(0, '2000')
+# depthEntry.insert(0, '2000')
+# massEntry.insert(0, '2000')
+# -----------------------------------------------------------
+
+
 if __name__ == '__main__':
     root.mainloop()
-
