@@ -20,7 +20,7 @@ BASE_DIR = os.path.abspath(os.curdir)
 # --------------------- WINDOW SETTINGS ---------------------
 root = tkinter.Tk()
 root.title('Auto Passport Constructor')  # title window
-root.iconbitmap(BASE_DIR + sep + 'Pictures' + sep + 'AutoPassportIcon.ico')  # set app icon
+# root.iconbitmap(BASE_DIR + sep + 'Pictures' + sep + 'AutoPassportIcon.ico')  # set app icon
 root.configure(bg=BACKGROUND_COLOR)
 root.geometry(f'{WINDOW_WEIGHT}x{WINDOW_HEIGHT}')
 root.maxsize(WINDOW_WEIGHT, WINDOW_HEIGHT)
