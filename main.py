@@ -1,11 +1,13 @@
 import os
+import re
+import datetime
+import tkinter
+
 from os import sep
 from docxtpl import DocxTemplate
-import tkinter
 from tkinter.ttk import Combobox
-from tkinter import messagebox, filedialog, Menu, Checkbutton
-import datetime
-import re
+from tkinter import messagebox, filedialog, Checkbutton
+
 
 VERSION = '2.5'  # 06/02/2023 13:19
 BASE_FONT = 'Arial Bold'
