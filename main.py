@@ -9,7 +9,7 @@ from tkinter.ttk import Combobox
 from tkinter import messagebox, filedialog, Checkbutton
 
 
-VERSION = '2.5'  # 06/02/2023 13:19
+VERSION = '2.5.1'  # 06/02/2023 15:04
 BASE_FONT = 'Arial Bold'
 SIZE_BASE_FONT = 13
 BACKGROUND_COLOR = '#A0D6FF'
@@ -272,10 +272,23 @@ installationCombo['values'] = (
     'Напольный',
     'Встраиваемый',
 )
-
-
 # **********************************************************
 
+
+# classProtection
+# ******************** Lable, Combobox *********************
+classProtectionLable = tkinter.Label(
+    generalDataFrame,
+    text='Класс защиты: ',
+    font=(BASE_FONT, SIZE_BASE_FONT),
+    bg=BACKGROUND_COLOR,
+)
+classProtectionCombo = Combobox(generalDataFrame, width=12, state="readonly")
+classProtectionCombo['values'] = (
+    'I',
+    'II',
+)
+# **********************************************************
 
 # height, length, depth, mass
 # ***************** Validate, Lable, Entry *****************
@@ -416,10 +429,16 @@ def construct_context():
     length = lengthEntry.get()
     depth = depthEntry.get()
     mass = massEntry.get()
+    classProtection = classProtectionCombo.get()
 
     if not all([year, basicName, systemNumber, name, nominalCurrent, shortCircuitCurrent, internationalProtection,
-                grounding, installation, crossSection, height, length, depth, mass]):
+                grounding, installation, crossSection, height, length, depth, mass, classProtection]):
         return
+
+    if installation == 'Напольный':
+        montagePlace = 'полу'
+    else:
+        montagePlace = 'стене'
 
     context = {
         'basic_name': basicName,
@@ -436,6 +455,8 @@ def construct_context():
         'length': length,
         'depth': depth,
         'mass': mass,
+        'class_protection': classProtection,
+        'montage_place': montagePlace,
     }
 
     return context
@@ -603,6 +624,9 @@ crossSectionEntry.grid(column=1, row=5)
 installationLable.grid(column=0, row=6, sticky='e')
 installationCombo.grid(column=1, row=6)
 
+classProtectionLable.grid(column=0, row=7, sticky='e')
+classProtectionCombo.grid(column=1, row=7)
+
 heightLable.grid(column=0, row=0, sticky='e')
 heightEntry.grid(column=1, row=0)
 
@@ -625,22 +649,22 @@ btn.grid(column=0, row=1, pady=10, )
 
 
 # ---------------------CASE FOR TEST ------------------------
-# purposePanelCombo.set('1')
-# purposeIntroductionApparatusCombo.set('1')
-# existenceExtraDeviceCombo.set('0')
-# protectionOutgoingLinesCombo.set('1')
-# internationalProtectionCombo.set('31')
-# nameEntry.insert(0, 'TEST_ЩМП-1')
-# systemNumberEntry.insert(0, '8888')
-# nominalCurrentEntry.insert(0, '250')
-# shortCircuitCurrentEntry.insert(0, '4.5')
-# groundingCombo.set('TN-S')
-# crossSectionEntry.insert(0, '1x25')
-# installationCombo.set('Навесной')
-# heightEntry.insert(0, '2000')
-# lengthEntry.insert(0, '2000')
-# depthEntry.insert(0, '2000')
-# massEntry.insert(0, '2000')
+purposePanelCombo.set('1')
+purposeIntroductionApparatusCombo.set('1')
+existenceExtraDeviceCombo.set('0')
+protectionOutgoingLinesCombo.set('1')
+internationalProtectionCombo.set('31')
+nameEntry.insert(0, 'TEST_ЩМП-1')
+systemNumberEntry.insert(0, '8888')
+nominalCurrentEntry.insert(0, '250')
+shortCircuitCurrentEntry.insert(0, '4.5')
+groundingCombo.set('TN-S')
+crossSectionEntry.insert(0, '1x25')
+installationCombo.set('Навесной')
+heightEntry.insert(0, '2000')
+lengthEntry.insert(0, '2000')
+depthEntry.insert(0, '2000')
+massEntry.insert(0, '2000')
 # -----------------------------------------------------------
 
 
